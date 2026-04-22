@@ -1,0 +1,20 @@
+{
+  "records": [
+    {
+      "event_type": "PROJECT_COMMISSIONING",
+      "source": "Mock Source",
+      "entities": {
+        "candidate_name": "Hon. Peter Ipatas",
+        "electorate": "Enga Provincial",
+        "party_affiliation": "United Resources Party"
+      },
+      "sentiment_score": 0.72,
+      "confidence_level": "HIGH",
+      "hegarty_score": 0.618,
+      "shift_flag": true,
+      "reasoning": "Mock reasoning"
+    }
+  ],
+  "total_processed": 1,
+  "errors": []
+}
