@@ -44,9 +44,11 @@ async def run_pipeline(
     all_errors.extend(ingest_errors)
 
     if not raw_items:
-        raise HTTPException(
-            status_code=502,
-            detail={"message": "Ingestion produced no items.", "errors": all_errors},
+        logger.warning("Pipeline: ingestion produced no items. Errors: %s", all_errors)
+        return PipelineResponse(
+            total_processed=0,
+            records=[],
+            errors=all_errors,
         )
 
     # ── 2. Normalize ─────────────────────────────────────────────────────────
