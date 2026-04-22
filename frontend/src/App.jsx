@@ -311,6 +311,7 @@ export default function App() {
   const [records, setRecords] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [apiErrors, setApiErrors] = useState([]);
   const [tab, setTab] = useState("records");
   const [filter, setFilter] = useState("ALL_EVENTS");
   const [selected, setSelected] = useState(null);
@@ -331,9 +332,12 @@ export default function App() {
             ]
           })
         });
-        if (!res.ok) throw new Error("Failed to fetch pipeline data");
+        if (!res.ok) throw new Error("Failed to connect to pipeline API");
         const data = await res.json();
         setRecords(data.records);
+        if (data.errors && data.errors.length > 0) {
+          setApiErrors(data.errors);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -433,9 +437,19 @@ export default function App() {
       {isLoading ? (
         <div style={{ color: "#38bdf8", padding: 20, fontFamily: "monospace" }}>LOADING INTELLIGENCE PIPELINE...</div>
       ) : error ? (
-        <div style={{ color: "#ff3d5a", padding: 20, fontFamily: "monospace" }}>ERROR: {error}</div>
+        <div style={{ color: "#ff3d5a", padding: 20, fontFamily: "monospace" }}>CONNECTION ERROR: {error}</div>
       ) : (
         <>
+          {apiErrors.length > 0 && (
+            <div style={{
+              background: "#1e0f0f", borderBottom: "1px solid #ff3d5a44",
+              padding: "8px 20px", color: "#ff3d5a", fontSize: 10,
+              fontFamily: "monospace", display: "flex", gap: 12, alignItems: "center"
+            }}>
+              <span style={{ fontWeight: 800 }}>⚠ PIPELINE ALERTS:</span>
+              <span style={{ opacity: 0.8 }}>{apiErrors.join(" | ")}</span>
+            </div>
+          )}
           {tab === "records" && (
             <div style={{ display: "grid", gridTemplateColumns: "340px 1fr 320px", height: "calc(100vh - 102px)" }}>
               <div style={{ borderRight: "1px solid #0f1e30", display: "flex", flexDirection: "column", overflow: "hidden" }}>
@@ -454,13 +468,17 @@ export default function App() {
                   </select>
                 </div>
                 <div style={{ flex: 1, overflowY: "auto", padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
-                  {filtered.map((r, i) => (
-                    <RecordCard
-                      key={i} record={r} index={i}
-                      selected={selected === i}
-                      onClick={() => setSelected(selected === i ? null : i)}
-                    />
-                  ))}
+                  {filtered.length > 0 ? (
+                    filtered.map((r, i) => (
+                      <RecordCard
+                        key={i} record={r} index={i}
+                        selected={selected === i}
+                        onClick={() => setSelected(selected === i ? null : i)}
+                      />
+                    ))
+                  ) : (
+                    <div style={{ color: "#334155", textAlign: "center", marginTop: 40, fontSize: 11 }}>NO RECORDS AVAILABLE</div>
+                  )}
                 </div>
               </div>
 
