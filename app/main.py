@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse
 import os
 
 from app.routers import ingest, pipeline, health, analyst
+from api.routes import elections
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -44,6 +45,7 @@ app.include_router(health.router, prefix="/health", tags=["Health"])
 app.include_router(ingest.router, prefix="/ingest", tags=["Ingestion"])
 app.include_router(pipeline.router, prefix="/pipeline", tags=["Pipeline"])
 app.include_router(analyst.router, prefix="/analyst", tags=["Analyst"])
+app.include_router(elections.router, prefix="/elections", tags=["Elections"])
 
 # Serve static files from frontend/dist
 if os.path.exists("frontend/dist"):
